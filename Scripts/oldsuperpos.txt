@@ -1,0 +1,201 @@
+ else {	//если прыжок ИЗ кристалла
+					
+					crystalIDTemp = crystalID[posX,posY];
+					crystalCenterX = crystalIDX[crystalIDTemp];
+					crystalCenterY = crystalIDY[crystalIDTemp];
+					float frenq=10;
+					A = 0;
+					if (crystalStart [crystalCenterX, crystalCenterY] == 0) {	//если ориентация горизорнтлаьная
+						for (int nn = -crystalSizeLeft [crystalCenterX, crystalCenterY]; nn <= crystalSizeRight [crystalCenterX, crystalCenterY]; nn++) {	//перебор по цепи кристалла
+							int tempPosX = posX + nn;
+							for (int xx = -1; xx <= 1; xx++) {
+								for (int yy = -1; yy <= 1; yy++) {
+									if (xx != 0 || yy != 0) {
+										c = xx * xx + yy * yy;
+										delE = Enrg [tempPosX + xx, posY + yy] - E * e * r * xx - Enrg [tempPosX, posY];
+										if (crystalID [tempPosX, posY] == crystalID [tempPosX + xx, posY + yy]) {	//если прыжок внутри кристалла
+											if (crystalStart [crystalCenterX, crystalCenterY]==0) {	//если ориентация горизорнтлаьная
+												if (yy == 0) {
+													frenq = frenqSmall;	//8
+												} else {
+													frenq = frenqBig;	//9
+												}
+											} else {		//если ориентация вертикальная
+												if (xx == 0) {
+													frenq = frenqSmall;
+												} else {
+													frenq = frenqBig;
+												}
+											}
+										} else {		//если прыжок вне кристалла
+											frenq = 10;
+										}
+										if (posY + yy < 25 || posY + yy > 175 || tempPosX + xx < 40) {
+											v [A] = 0;
+										} else {
+											v [A] = Mathf.Exp (-frenq * (Mathf.Sqrt (c))+10) * Mathf.Exp ((delE + Mathf.Abs (delE)) / (-2 * kT));
+										}
+										//Debug.Log ("[" + (int)(X + xx) + "," + (int)(Y + yy) + "] = " + v [A]);
+										A++;
+									}
+								}
+							}
+						}
+					} else {
+						for (int nn = -crystalSizeDown [crystalCenterX, crystalCenterY]; nn <= crystalSizeUp [crystalCenterX, crystalCenterY]; nn++) {
+							int tempPosY = posY + nn;
+							for (int xx = -1; xx <= 1; xx++) {
+								for (int yy = -1; yy <= 1; yy++) {
+									if (xx != 0 || yy != 0) {
+										c = xx * xx + yy * yy;
+										delE = Enrg [posX + xx, tempPosY + yy] - E * e * r * xx - Enrg [posX, tempPosY];
+										if (crystalID [posX, tempPosY] == crystalID [posX + xx, tempPosY + yy]) {	//если прыжок внутри кристалла
+											if (crystalStart [crystalCenterX, crystalCenterY]==0) {	//если ориентация горизорнтлаьная
+												if (yy == 0) {
+													frenq = frenqSmall;	//8
+												} else {
+													frenq = frenqBig;	//9
+												}
+											} else {		//если ориентация вертикальная
+												if (xx == 0) {
+													frenq = frenqSmall;
+												} else {
+													frenq = frenqBig;
+												}
+											}
+										} else {		//если прыжок вне кристалла
+											frenq = 10;
+										}
+										if (tempPosY + yy < 25 || tempPosY + yy > 175 || posX + xx < 40) {
+											v [A] = 0;
+										} else {
+											v [A] = Mathf.Exp (-frenq * (Mathf.Sqrt (c))+10) * Mathf.Exp ((delE + Mathf.Abs (delE)) / (-2 * kT));
+										}
+										//Debug.Log ("[" + (int)(X + xx) + "," + (int)(Y + yy) + "] = " + v [A]);
+										A++;
+									}
+								}
+							}
+						}
+					}
+
+					/*for (int xx = -1; xx <= 1; xx++) {
+						for (int yy = -1; yy <= 1; yy++) {
+							if (xx != 0 || yy != 0) {
+								c = xx * xx + yy * yy;
+								delE = Enrg [posX + xx, posY + yy] - E * e * r * xx - Enrg [posX, posY];
+								if (crystalID [posX, posY] == crystalID [posX + xx, posY + yy]) {	//если прыжок внутри кристалла
+									if (crystalStart [crystalCenterX, crystalCenterY]==0) {	//если ориентация горизорнтлаьная
+										if (yy == 0) {
+											frenq = frenqSmall;	//8
+										} else {
+											frenq = frenqBig;	//9
+										}
+									} else {		//если ориентация вертикальная
+										if (xx == 0) {
+											frenq = frenqSmall;
+										} else {
+											frenq = frenqBig;
+										}
+									}
+								} else {		//если прыжок вне кристалла
+									frenq = 10;
+								}
+								if (posY + yy < 25 || posY + yy > 175 || posX + xx < 40) {
+									v [A] = 0;
+								} else {
+									v [A] = Mathf.Exp (-frenq * (Mathf.Sqrt (c))+10) * Mathf.Exp ((delE + Mathf.Abs (delE)) / (-2 * kT));
+								}
+								//Debug.Log ("[" + (int)(X + xx) + "," + (int)(Y + yy) + "] = " + v [A]);
+								A++;
+							}
+						}
+					}*/
+					A--;
+					c = 0;
+					for (i = 0; i <= A; i++) {
+						c += v [i];		//временная сумма всех темпов
+					}
+					tempSumm = c;
+
+					for (i = 0; i <= A; i++) {
+						p [i] = v [i] / c;
+						//Debug.Log (i + ") " + p [i]);
+					}
+
+					d = Random.Range (0, 1f);
+					i = 0;
+					c = 0;
+					while (c<=d) {
+						c += p [i];
+						i++;
+					}
+					i--;
+
+					A=0;
+					xxx = -1;
+					yyy = -1;
+					nnn = 0;
+
+					if (crystalID [posX, posY] == 0) {		//Если прыжок НЕ из кристалла
+						for (int xx = -1; xx <= 1; xx++) {
+							for (int yy = -1; yy <= 1; yy++) {
+								if (xx != 0 || yy != 0) {
+									if (A <= i) {
+										xxx = xx;
+										yyy = yy;
+									}
+									A++;
+								}
+							}
+						}
+					} else {		//Если прыжок ИЗ кристалла
+						if (crystalStart [crystalCenterX, crystalCenterY] == 0) {	//если ориентация горизорнтлаьная
+							for (int nn = -crystalSizeLeft [crystalCenterX, crystalCenterY]; nn <= crystalSizeRight [crystalCenterX, crystalCenterY]; nn++) {	//перебор по цепи кристалла
+								int tempPosX = posX + nn;
+								for (int xx = -1; xx <= 1; xx++) {
+									for (int yy = -1; yy <= 1; yy++) {
+										if (xx != 0 || yy != 0) {
+											if (A <= i) {
+												xxx = xx;
+												yyy = yy;
+												nnn = nn;
+											}
+											A++;
+										}
+									}
+								}
+							}
+						} else {
+							for (int nn = -crystalSizeDown [crystalCenterX, crystalCenterY]; nn <= crystalSizeUp [crystalCenterX, crystalCenterY]; nn++) {
+								int tempPosY = posY + nn;
+								for (int xx = -1; xx <= 1; xx++) {
+									for (int yy = -1; yy <= 1; yy++) {
+										if (xx != 0 || yy != 0) {
+											if (A <= i) {
+												xxx = xx;
+												yyy = yy;
+												nnn = nn;
+											}
+											A++;
+										}
+									}
+								}
+							}
+						}
+					}
+
+					/*for (int xx = -1; xx <= 1; xx++) {
+						for (int yy = -1; yy <= 1; yy++) {
+							if (xx != 0 || yy != 0) {
+								if (A <= i) {
+									xxx = xx;
+									yyy = yy;
+								}
+								A++;
+							}
+						}
+					}*/
+
+					T = ((-Mathf.Log (Random.Range (0.0000001f, 1f))) / (tempSumm)) / 10000000;
+				}
