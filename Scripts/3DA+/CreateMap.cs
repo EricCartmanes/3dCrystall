@@ -12,14 +12,15 @@ public class CreateMap : MonoBehaviour {
 	public int growTime = 5;
 
 	public EnrgManager enrgManager;
+	public SetLocalPhase setLocalPhase;
 
 
 	// Use this for initialization
 	void Start () {
 	
-		for (int x = 0; x < 200; x++) {
-			for (int y = 0; y < 200; y++) {
-				for (int z = 0; z < 200; z++) {
+		for (int x = 0; x < 80; x++) {
+			for (int y = 0; y < 80; y++) {
+				for (int z = 0; z < 80; z++) {
 					if ((int)Random.Range (0, startChance) == 1) {
 						Collider[] hitCollider = Physics.OverlapSphere (new Vector3(x,y,z), 1.5f);
 						if (hitCollider.Length == 0) {
@@ -39,6 +40,7 @@ public class CreateMap : MonoBehaviour {
 		for (int i = 0; i < growTime; i++) {
 			GrowStep ();
 		}
+		//setLocalPhase.CheckArea (new Vector3(50, 100, 100));
 	}
 
 	void SetEnrg(){
@@ -154,7 +156,7 @@ public class CreateMap : MonoBehaviour {
 			checkRight = true;
 		}
 		if (growDemension == 3) {
-			if (TryGrowInside (i)) {return;}
+			if (TryGrowOutside (i)) {return;}
 			checkInside = true;
 		}
 
@@ -171,7 +173,7 @@ public class CreateMap : MonoBehaviour {
 			checkRight = true;
 		}
 		if (newGrowDemension == 3) {
-			if (TryGrowInside (i)) {return;}
+			if (TryGrowOutside (i)) {return;}
 			checkInside = true;
 		}
 
@@ -184,7 +186,7 @@ public class CreateMap : MonoBehaviour {
 			checkRight = true;
 		}
 		if ((growDemension + newGrowDemension)==3) {
-			if (TryGrowInside (i)) {return;}
+			if (TryGrowOutside (i)) {return;}
 			checkInside = true;
 		}
 	}
@@ -201,16 +203,14 @@ public class CreateMap : MonoBehaviour {
 			if (CheckGrowUp (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y+0.5f, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x - allCrystalObj [i].up.x * 0.5f, V3.y - allCrystalObj [i].up.y * 0.5f, V3.z - allCrystalObj [i].up.z * 0.5f);
 				allCrystalScript [i].sizeUp++;
+				RescaleCrystal (i);
 				return true;
 			} else if (CheckGrowDown (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y+0.5f, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x + allCrystalObj [i].up.x * 0.5f, V3.y + allCrystalObj [i].up.y * 0.5f, V3.z + allCrystalObj [i].up.z * 0.5f);
 				allCrystalScript [i].sizeDown++;
+				RescaleCrystal (i);
 				return true;
 			} else {
 				return false;
@@ -219,16 +219,14 @@ public class CreateMap : MonoBehaviour {
 			if (CheckGrowDown (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y+0.5f, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x + allCrystalObj [i].up.x * 0.5f, V3.y + allCrystalObj [i].up.y * 0.5f, V3.z + allCrystalObj [i].up.z * 0.5f);
 				allCrystalScript [i].sizeDown++;
+				RescaleCrystal (i);
 				return true;
 			} else if (CheckGrowUp (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y+0.5f, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x - allCrystalObj [i].up.x * 0.5f, V3.y - allCrystalObj [i].up.y * 0.5f, V3.z - allCrystalObj [i].up.z * 0.5f);
 				allCrystalScript [i].sizeUp++;
+				RescaleCrystal (i);
 				return true;
 			} else {
 				return false;
@@ -282,17 +280,15 @@ public class CreateMap : MonoBehaviour {
 		if (growSide == 1) {
 			if (CheckGrowRight (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x+0.5f, L.y, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x - allCrystalObj [i].right.x * 0.5f, V3.y - allCrystalObj [i].right.y * 0.5f, V3.z - allCrystalObj [i].right.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x+1, L.y, L.z);
 				allCrystalScript [i].sizeRight++;
+				RescaleCrystal (i);
 				return true;
 			} else if (CheckGrowLeft (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x+0.5f, L.y, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x + allCrystalObj [i].right.x * 0.5f, V3.y + allCrystalObj [i].right.y * 0.5f, V3.z + allCrystalObj [i].right.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x+1, L.y, L.z);
 				allCrystalScript [i].sizeLeft++;
+				RescaleCrystal (i);
 				return true;
 			} else {
 				return false;
@@ -300,17 +296,15 @@ public class CreateMap : MonoBehaviour {
 		} else {
 			if (CheckGrowLeft (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x+0.5f, L.y, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x + allCrystalObj [i].right.x * 0.5f, V3.y + allCrystalObj [i].right.y * 0.5f, V3.z + allCrystalObj [i].right.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x+1, L.y, L.z);
 				allCrystalScript [i].sizeLeft++;
+				RescaleCrystal (i);
 				return true;
 			} else if (CheckGrowRight (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x+0.5f, L.y, L.z);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x - allCrystalObj [i].right.x * 0.5f, V3.y - allCrystalObj [i].right.y * 0.5f, V3.z - allCrystalObj [i].right.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x+1, L.y, L.z);
 				allCrystalScript [i].sizeRight++;
+				RescaleCrystal (i);
 				return true;
 			} else {
 				return false;
@@ -353,7 +347,7 @@ public class CreateMap : MonoBehaviour {
 
 	//=========================================================================================
 
-	bool TryGrowInside(int i){
+	bool TryGrowOutside(int i){
 		int growSide = 1;
 		if ((int)Random.Range (0, 2) == 1) {
 			growSide = 1;
@@ -362,37 +356,33 @@ public class CreateMap : MonoBehaviour {
 		}
 
 		if (growSide == 1) {
-			if (CheckGrowInside (i)) {
+			if (CheckGrowOutside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+0.5f);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x - allCrystalObj [i].forward.x * 0.5f, V3.y - allCrystalObj [i].forward.y * 0.5f, V3.z - allCrystalObj [i].forward.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
 				allCrystalScript [i].sizeInside++;
+				RescaleCrystal (i);
 				return true;
-			} else if (CheckGrowDown (i)) {
+			} else if (CheckGrowInside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+0.5f);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x + allCrystalObj [i].forward.x * 0.5f, V3.y + allCrystalObj [i].forward.y * 0.5f, V3.z + allCrystalObj [i].forward.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
 				allCrystalScript [i].sizeOutside++;
+				RescaleCrystal (i);
 				return true;
 			} else {
 				return false;
 			}
 		} else {
-			if (CheckGrowDown (i)) {
+			if (CheckGrowInside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+0.5f);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x + allCrystalObj [i].forward.x * 0.5f, V3.y + allCrystalObj [i].forward.y * 0.5f, V3.z + allCrystalObj [i].forward.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
 				allCrystalScript [i].sizeOutside++;
+				RescaleCrystal (i);
 				return true;
-			} else if (CheckGrowUp (i)) {
+			} else if (CheckGrowOutside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
-				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+0.5f);
-				Vector3 V3 = allCrystalObj [i].position;
-				V3 = new Vector3 (V3.x - allCrystalObj [i].forward.x * 0.5f, V3.y - allCrystalObj [i].forward.y * 0.5f, V3.z - allCrystalObj [i].forward.z * 0.5f);
+				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
 				allCrystalScript [i].sizeInside++;
+				RescaleCrystal (i);
 				return true;
 			} else {
 				return false;
@@ -430,6 +420,17 @@ public class CreateMap : MonoBehaviour {
 			}
 		}
 		return true;
+	}
+
+	void RescaleCrystal(int i){
+		Vector3 V3 = allCrystalObj [i].position;
+		float offsetX = (allCrystalScript [i].sizeRight - allCrystalScript [i].sizeLeft) * 0.5f;
+		float offsetY = (allCrystalScript [i].sizeUp - allCrystalScript [i].sizeDown) * 0.5f;
+		float offsetZ = (allCrystalScript [i].sizeOutside - allCrystalScript [i].sizeInside) * 0.5f;
+		V3 = new Vector3 (allCrystalScript [i].center.x + allCrystalObj [i].right.x * offsetX + allCrystalObj [i].up.x * offsetY + allCrystalObj [i].forward.x * offsetZ,
+			allCrystalScript [i].center.y + allCrystalObj [i].right.y * offsetX + allCrystalObj [i].up.y * offsetY + allCrystalObj [i].forward.y * offsetZ,
+			allCrystalScript [i].center.z + allCrystalObj [i].right.z * offsetX + allCrystalObj [i].up.z * offsetY + allCrystalObj [i].forward.z * offsetZ);
+		allCrystalObj [i].transform.position = V3;
 	}
 
 	// Update is called once per frame
