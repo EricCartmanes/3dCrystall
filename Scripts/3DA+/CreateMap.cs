@@ -14,13 +14,16 @@ public class CreateMap : MonoBehaviour {
 	public EnrgManager enrgManager;
 	public SetLocalPhase setLocalPhase;
 
+	public GameObject growTestGood;
+	public GameObject growTestBad;
+	public bool debugGrow = false;
 
 	// Use this for initialization
 	void Start () {
 	
-		for (int x = 0; x < 80; x++) {
-			for (int y = 0; y < 80; y++) {
-				for (int z = 0; z < 80; z++) {
+		for (int x = 0; x < 40; x++) {
+			for (int y = 0; y < 40; y++) {
+				for (int z = 0; z < 40; z++) {
 					if ((int)Random.Range (0, startChance) == 1) {
 						Collider[] hitCollider = Physics.OverlapSphere (new Vector3(x,y,z), 1.5f);
 						if (hitCollider.Length == 0) {
@@ -37,9 +40,9 @@ public class CreateMap : MonoBehaviour {
 			}
 		}
 		FirstGrowStep ();
-		for (int i = 0; i < growTime; i++) {
-			GrowStep ();
-		}
+		//for (int i = 0; i < growTime; i++) {
+		//	GrowStep ();
+		//}
 		//setLocalPhase.CheckArea (new Vector3(50, 100, 100));
 	}
 
@@ -143,6 +146,7 @@ public class CreateMap : MonoBehaviour {
 	}
 
 	void RandomDimension(int i){
+		//TryGrowOutside (i);
 		bool checkUp = false;
 		bool checkRight = false;
 		bool checkInside = false;
@@ -160,7 +164,7 @@ public class CreateMap : MonoBehaviour {
 			checkInside = true;
 		}
 
-		int newGrowDemension = 1;
+		int newGrowDemension = (int)Random.Range (0, 3) + 1;
 		while (newGrowDemension == growDemension) {
 			newGrowDemension = (int)Random.Range (0, 3) + 1;
 		}
@@ -243,9 +247,15 @@ public class CreateMap : MonoBehaviour {
 													,allCrystalScript [i].center.y+x*allCrystalObj [i].right.y+z*allCrystalObj [i].forward.y
 													,allCrystalScript [i].center.z+x*allCrystalObj [i].right.z+z*allCrystalObj [i].forward.z)
 					+ new Vector3(allCrystalObj [i].up.x*allCrystalScript [i].sizeUp,allCrystalObj [i].up.y*allCrystalScript [i].sizeUp,allCrystalObj [i].up.z*allCrystalScript [i].sizeUp)  + allCrystalObj [i].up;
-				Collider[] hitCollider = Physics.OverlapSphere (targetPoint, 1.5f);
+				Collider[] hitCollider = Physics.OverlapBox (targetPoint, new Vector3(1.5f,1.5f,1.5f));
 				if (hitCollider.Length > 1) {
+					if (debugGrow) {
+						GameObject LocalPoint = Instantiate (growTestBad, targetPoint, Quaternion.identity) as GameObject;
+					}
 					return false;
+				}
+				if (debugGrow) {
+					GameObject LocalPoint = Instantiate (growTestGood, targetPoint, Quaternion.identity) as GameObject;
 				}
 			}
 		}
@@ -258,9 +268,15 @@ public class CreateMap : MonoBehaviour {
 													,allCrystalScript [i].center.y+x*allCrystalObj [i].right.y+z*allCrystalObj [i].forward.y
 													,allCrystalScript [i].center.z+x*allCrystalObj [i].right.z+z*allCrystalObj [i].forward.z)
 					- new Vector3(allCrystalObj [i].up.x*allCrystalScript [i].sizeDown,allCrystalObj [i].up.y*allCrystalScript [i].sizeDown,allCrystalObj [i].up.z*allCrystalScript [i].sizeDown) - allCrystalObj [i].up;
-				Collider[] hitCollider = Physics.OverlapSphere (targetPoint, 1.5f);
+				Collider[] hitCollider = Physics.OverlapBox (targetPoint, new Vector3(1.5f,1.5f,1.5f));
 				if (hitCollider.Length > 1) {
+					if (debugGrow) {
+						GameObject LocalPoint = Instantiate (growTestBad, targetPoint, Quaternion.identity) as GameObject;
+					}
 					return false;
+				}
+				if (debugGrow) {
+					GameObject LocalPoint = Instantiate (growTestGood, targetPoint, Quaternion.identity) as GameObject;
 				}
 			}
 		}
@@ -317,12 +333,18 @@ public class CreateMap : MonoBehaviour {
 		for(int y=-allCrystalScript [i].sizeDown;y<=allCrystalScript [i].sizeUp;y++){
 			for(int z=-allCrystalScript [i].sizeInside;z<=allCrystalScript [i].sizeOutside;z++){
 				Vector3 targetPoint = new Vector3(allCrystalScript [i].center.x+y*allCrystalObj [i].up.x+z*allCrystalObj [i].forward.x
-					,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+z*allCrystalObj [i].forward.y
-					,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+z*allCrystalObj [i].forward.z)
+												,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+z*allCrystalObj [i].forward.y
+												,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+z*allCrystalObj [i].forward.z)
 					+ new Vector3(allCrystalObj [i].right.x*allCrystalScript [i].sizeRight,allCrystalObj [i].right.y*allCrystalScript [i].sizeRight,allCrystalObj [i].right.z*allCrystalScript [i].sizeRight)  + allCrystalObj [i].right;
-				Collider[] hitCollider = Physics.OverlapSphere (targetPoint, 1.5f);
+				Collider[] hitCollider = Physics.OverlapBox (targetPoint, new Vector3(1.5f,1.5f,1.5f));
 				if (hitCollider.Length > 1) {
+					if (debugGrow) {
+						GameObject LocalPoint = Instantiate (growTestBad, targetPoint, Quaternion.identity) as GameObject;
+					}
 					return false;
+				}
+				if (debugGrow) {
+					GameObject LocalPoint = Instantiate (growTestGood, targetPoint, Quaternion.identity) as GameObject;
 				}
 			}
 		}
@@ -332,12 +354,18 @@ public class CreateMap : MonoBehaviour {
 		for(int y=-allCrystalScript [i].sizeDown;y<=allCrystalScript [i].sizeUp;y++){
 			for(int z=-allCrystalScript [i].sizeInside;z<=allCrystalScript [i].sizeOutside;z++){
 				Vector3 targetPoint = new Vector3(allCrystalScript [i].center.x+y*allCrystalObj [i].up.x+z*allCrystalObj [i].forward.x
-					,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+z*allCrystalObj [i].forward.y
-					,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+z*allCrystalObj [i].forward.z)
-					- new Vector3(allCrystalObj [i].right.x*allCrystalScript [i].sizeRight,allCrystalObj [i].right.y*allCrystalScript [i].sizeRight,allCrystalObj [i].right.z*allCrystalScript [i].sizeRight)  - allCrystalObj [i].right;
-				Collider[] hitCollider = Physics.OverlapSphere (targetPoint, 1.5f);
+												,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+z*allCrystalObj [i].forward.y
+												,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+z*allCrystalObj [i].forward.z)
+					- new Vector3(allCrystalObj [i].right.x*allCrystalScript [i].sizeLeft,allCrystalObj [i].right.y*allCrystalScript [i].sizeLeft,allCrystalObj [i].right.z*allCrystalScript [i].sizeLeft)  - allCrystalObj [i].right;
+				Collider[] hitCollider = Physics.OverlapBox (targetPoint, new Vector3(1.5f,1.5f,1.5f));
 				if (hitCollider.Length > 1) {
+					if (debugGrow) {
+						GameObject LocalPoint = Instantiate (growTestBad, targetPoint, Quaternion.identity) as GameObject;
+					}
 					return false;
+				}
+				if (debugGrow) {
+					GameObject LocalPoint = Instantiate (growTestGood, targetPoint, Quaternion.identity) as GameObject;
 				}
 			}
 		}
@@ -359,13 +387,13 @@ public class CreateMap : MonoBehaviour {
 			if (CheckGrowOutside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
-				allCrystalScript [i].sizeInside++;
+				allCrystalScript [i].sizeOutside++;
 				RescaleCrystal (i);
 				return true;
 			} else if (CheckGrowInside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
-				allCrystalScript [i].sizeOutside++;
+				allCrystalScript [i].sizeInside++;
 				RescaleCrystal (i);
 				return true;
 			} else {
@@ -375,13 +403,13 @@ public class CreateMap : MonoBehaviour {
 			if (CheckGrowInside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
-				allCrystalScript [i].sizeOutside++;
+				allCrystalScript [i].sizeInside++;
 				RescaleCrystal (i);
 				return true;
 			} else if (CheckGrowOutside (i)) {
 				Vector3 L = allCrystalObj [i].localScale;
 				allCrystalObj [i].localScale = new Vector3 (L.x, L.y, L.z+1);
-				allCrystalScript [i].sizeInside++;
+				allCrystalScript [i].sizeOutside++;
 				RescaleCrystal (i);
 				return true;
 			} else {
@@ -395,12 +423,18 @@ public class CreateMap : MonoBehaviour {
 		for(int x=-allCrystalScript [i].sizeLeft;x<=allCrystalScript [i].sizeRight;x++){
 			for(int y=-allCrystalScript [i].sizeDown;y<=allCrystalScript [i].sizeUp;y++){
 				Vector3 targetPoint = new Vector3(allCrystalScript [i].center.x+y*allCrystalObj [i].up.x+x*allCrystalObj [i].right.x
-					,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+x*allCrystalObj [i].right.y
-					,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+x*allCrystalObj [i].right.z)
-					+ new Vector3(allCrystalObj [i].forward.x*allCrystalScript [i].sizeInside,allCrystalObj [i].forward.y*allCrystalScript [i].sizeInside,allCrystalObj [i].forward.z*allCrystalScript [i].sizeInside)  + allCrystalObj [i].forward;
-				Collider[] hitCollider = Physics.OverlapSphere (targetPoint, 1.5f);
+												,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+x*allCrystalObj [i].right.y
+												,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+x*allCrystalObj [i].right.z)
+					- new Vector3(allCrystalObj [i].forward.x*allCrystalScript [i].sizeInside,allCrystalObj [i].forward.y*allCrystalScript [i].sizeInside,allCrystalObj [i].forward.z*allCrystalScript [i].sizeInside)  - allCrystalObj [i].forward;
+				Collider[] hitCollider = Physics.OverlapBox (targetPoint, new Vector3(1.5f,1.5f,1.5f));
 				if (hitCollider.Length > 1) {
+					if (debugGrow) {
+						GameObject LocalPoint = Instantiate (growTestBad, targetPoint, Quaternion.identity) as GameObject;
+					}
 					return false;
+				}
+				if (debugGrow) {
+					GameObject LocalPoint = Instantiate (growTestGood, targetPoint, Quaternion.identity) as GameObject;
 				}
 			}
 		}
@@ -410,12 +444,18 @@ public class CreateMap : MonoBehaviour {
 		for(int x=-allCrystalScript [i].sizeLeft;x<=allCrystalScript [i].sizeRight;x++){
 			for(int y=-allCrystalScript [i].sizeDown;y<=allCrystalScript [i].sizeUp;y++){
 				Vector3 targetPoint = new Vector3(allCrystalScript [i].center.x+y*allCrystalObj [i].up.x+x*allCrystalObj [i].right.x
-					,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+x*allCrystalObj [i].right.y
-					,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+x*allCrystalObj [i].right.z)
-					- new Vector3(allCrystalObj [i].forward.x*allCrystalScript [i].sizeInside,allCrystalObj [i].forward.y*allCrystalScript [i].sizeInside,allCrystalObj [i].forward.z*allCrystalScript [i].sizeInside)  - allCrystalObj [i].forward;
-				Collider[] hitCollider = Physics.OverlapSphere (targetPoint, 1.5f);
+												,allCrystalScript [i].center.y+y*allCrystalObj [i].up.y+x*allCrystalObj [i].right.y
+												,allCrystalScript [i].center.z+y*allCrystalObj [i].up.z+x*allCrystalObj [i].right.z)
+					+ new Vector3(allCrystalObj [i].forward.x*allCrystalScript [i].sizeOutside,allCrystalObj [i].forward.y*allCrystalScript [i].sizeOutside,allCrystalObj [i].forward.z*allCrystalScript [i].sizeOutside)  + allCrystalObj [i].forward;
+				Collider[] hitCollider = Physics.OverlapBox (targetPoint, new Vector3(1.5f,1.5f,1.5f));
 				if (hitCollider.Length > 1) {
+					if (debugGrow) {
+						GameObject LocalPoint = Instantiate (growTestBad, targetPoint, Quaternion.identity) as GameObject;
+					}
 					return false;
+				}
+				if (debugGrow) {
+					GameObject LocalPoint = Instantiate (growTestGood, targetPoint, Quaternion.identity) as GameObject;
 				}
 			}
 		}
@@ -435,7 +475,8 @@ public class CreateMap : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+		if(Input.GetKeyDown("space"))
+			GrowStep ();
 	}
 
 
