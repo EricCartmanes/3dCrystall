@@ -15,6 +15,7 @@ public class CrystalInfo : MonoBehaviour {
 	public int sizeOutside = 0;
 
 	public bool pointCrystal = false;
+	public List<float> crystallEnrg = new List<float> ();
 
 
 	// Use this for initialization

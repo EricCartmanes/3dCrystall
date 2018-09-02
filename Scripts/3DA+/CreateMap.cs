@@ -11,6 +11,8 @@ public class CreateMap : MonoBehaviour {
 	private List<CrystalInfo> allCrystalScript = new List<CrystalInfo>();
 	public int growTime = 5;
 
+	public EnrgManager enrgManager;
+
 
 	// Use this for initialization
 	void Start () {
@@ -38,6 +40,22 @@ public class CreateMap : MonoBehaviour {
 			GrowStep ();
 		}
 	}
+
+	void SetEnrg(){
+		for (int i = 0; i < allCrystalScript.Count; i++) {
+			if (!allCrystalScript [i].pointCrystal) {
+				for(int x=-allCrystalScript [i].sizeLeft;x<=allCrystalScript [i].sizeRight;x++){
+					for(int z=-allCrystalScript [i].sizeInside;z<=allCrystalScript [i].sizeOutside;z++){
+						allCrystalScript [i].crystallEnrg.Add (enrgManager.CrystalEnrg());
+					}
+				}
+			}else{
+				//reset to local state
+			}
+		}
+
+	}
+
 	void FirstGrowStep(){
 		int growSide = 1;
 		for (int i = 0; i < allCrystalScript.Count; i++) {
