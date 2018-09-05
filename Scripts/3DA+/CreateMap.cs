@@ -21,9 +21,9 @@ public class CreateMap : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		for (int x = 0; x < 40; x++) {
-			for (int y = 0; y < 40; y++) {
-				for (int z = 0; z < 40; z++) {
+		for (int x = 0; x < 100; x++) {
+			for (int y = 0; y < 100; y++) {
+				for (int z = 0; z < 100; z++) {
 					if ((int)Random.Range (0, startChance) == 1) {
 						Collider[] hitCollider = Physics.OverlapSphere (new Vector3(x,y,z), 1.5f);
 						if (hitCollider.Length == 0) {
@@ -40,10 +40,11 @@ public class CreateMap : MonoBehaviour {
 			}
 		}
 		FirstGrowStep ();
-		//for (int i = 0; i < growTime; i++) {
-		//	GrowStep ();
-		//}
-		//setLocalPhase.CheckArea (new Vector3(50, 100, 100));
+		for (int i = 0; i < growTime; i++) {
+			GrowStep ();
+		}
+		SetEnrg ();
+		setLocalPhase.CheckArea (new Vector3(25, 50, 50));
 	}
 
 	void SetEnrg(){
@@ -475,8 +476,7 @@ public class CreateMap : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetKeyDown("space"))
-			GrowStep ();
+		
 	}
 
 
